@@ -10,7 +10,7 @@ class v3Pool:
         self,
         pool,
         chain,
-        update_from="gcp",
+        update_from="allium",
         low_memory=False,
         update=False,
         pull=True,
@@ -99,7 +99,13 @@ class v3Pool:
             max_bn_of_swaps = self.cache["swaps"].select("block_number").max().item()
             max_bn_of_mb = self.cache["mb"].select("block_number").max().item()
 
-            self.max_supported = min(max_bn_of_mb, max_bn_of_swaps)
+            if max_bn_of_mb is None:
+                self.max_supported = max_bn_of_swaps 
+            elif  max_bn_of_swaps is None:
+                self.max_supported = max_bn_of_mb 
+            else :
+                self.max_supported = min(max_bn_of_mb, max_bn_of_swaps)
+                
 
     def delete_tables(self, tables):
         """

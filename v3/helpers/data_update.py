@@ -1,18 +1,10 @@
 import polars as pl
 import os
 from datetime import date, timedelta, datetime, timezone
-from .connectors import allium, gbq
+from .connectors import allium
 from .test_helpers import *
 from pathlib import Path
 import json
-
-gcp_locked = True
-try:
-    from google.cloud import bigquery
-
-    gcp_locked = False
-except ImportError:
-    print("Unable to import GCP")
 
 
 # data updating
@@ -270,11 +262,6 @@ def _update_tables(pool, tables=[], test_mode=False):
 
 
 def update_tables(pool, update_from, tables=[], test_mode=False):
-    if update_from == "gcp":
-        assert not gcp_locked, "GCP could not be imported"
-        pool.connector = gbq()
-        _update_tables(pool, tables, test_mode)
-
     if update_from == "allium":
         assert pool.tgt_max_rows <= 100_000, "Attempting to pull too many rows"
 
